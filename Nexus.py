@@ -9,35 +9,58 @@ import time
 #realm tick rate 0.2s
 
 def on_press_end(key):
-    if key == keyboard.Key.alt_l:
-        return False
-
-def on_press_loop(key):
     if key == keyboard.Key.end:
         return False
 
-i = 0
-test = True
-while test:
-    with keyboard.Listener(on_press=on_press_loop) as listener:
-        time.sleep(.30)
-        if not listener.running:
-            print('Pause')
-            time.sleep(4)
-    with keyboard.Listener(on_press=on_press_end) as listener2:
-        time.sleep(.30)
-        if not listener2.running:
-            print('end')
-            test = False
-    print(i)
-    i+=1
-            
+def on_press_loop(key):
+    if key == keyboard.Key.alt_l:
+        return False
 
+def auto_nexus():
+    time.sleep(1)
+    print("snap")
+    im1 = ImageGrab.grab(bbox=(2120, 630, 2300, 670))  # x1, y1, x2, y2
+    time.sleep(1)
+    im2 = ImageGrab.grab(bbox=(2120, 630, 2300, 670))
+    im1.save('screenshot.png')
+    im2.save('screenshot1.png')
+
+    diff = ImageChops.difference(im1,im2)
+    diff.save('test.png')
+    return np.mean(diff)
+
+values = []
+for x in range(10):
+    change = auto_nexus()
+    values.append(change)
+    print(change)
+    if change > 150:
+        break
+
+# i = 0
+# test = True
+# state = False
+# while test:
+#     with keyboard.Listener(on_press=on_press_loop) as listener:
+#         time.sleep(.4)
+#         if not listener.running:
+#             state = not state
+#     with keyboard.Listener(on_press=on_press_end) as listener2:
+#         time.sleep(.10)
+#         if not listener2.running:
+#             print('end')
+#             test = False
+
+#     if state:
+#         print("running...")
+#         auto_nexus()
+#     else:
+#         print("off...")
+
+# --------------------------------------------------------------------------    
 
 # with keyboard.Listener(on_press=on_press_start) as listener:
 #     listener.join() # wait for F11...
-
-
 
 # while True:
 #     print("setup")
