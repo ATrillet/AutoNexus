@@ -8,6 +8,7 @@ import time
 
 #realm tick rate 0.2s
 hp_percent = 3
+board = Controller()
 
 def on_press_end(key):
     if key == keyboard.Key.end:
@@ -23,6 +24,7 @@ def auto_nexus(hpx, hpy,r,g,b):
     a,b,c = rgb_im.getpixel((0, 0))
     if a==82 and b==85 and c==82:
         print("dying")
+        board.press('r')
     else:
         print("living")
 
