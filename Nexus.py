@@ -7,6 +7,7 @@ from pynput import keyboard
 import time
 
 #realm tick rate 0.2s
+hp_percent = 3
 
 def on_press_end(key):
     if key == keyboard.Key.end:
@@ -16,46 +17,87 @@ def on_press_loop(key):
     if key == keyboard.Key.alt_l:
         return False
 
-def auto_nexus():
-    time.sleep(1)
-    print("snap")
-    im1 = ImageGrab.grab(bbox=(2120, 630, 2300, 670))  # x1, y1, x2, y2
-    time.sleep(1)
-    im2 = ImageGrab.grab(bbox=(2120, 630, 2300, 670))
-    im1.save('screenshot.png')
-    im2.save('screenshot1.png')
+def auto_nexus(hpx, hpy,r,g,b):
+    im1 = ImageGrab.grab(bbox=(x,y,x+1,y+1))  # x1, y1, x2, y2
+    rgb_im = im1.convert('RGB')
+    a,b,c = rgb_im.getpixel((0, 0))
+    if a==82 and b==85 and c==82:
+        print("dying")
+    else:
+        print("living")
 
-    diff = ImageChops.difference(im1,im2)
-    diff.save('test.png')
-    return np.mean(diff)
 
-values = []
-for x in range(10):
-    change = auto_nexus()
-    values.append(change)
-    print(change)
-    if change > 150:
-        break
 
-# i = 0
-# test = True
-# state = False
-# while test:
-#     with keyboard.Listener(on_press=on_press_loop) as listener:
-#         time.sleep(.4)
-#         if not listener.running:
-#             state = not state
-#     with keyboard.Listener(on_press=on_press_end) as listener2:
-#         time.sleep(.10)
-#         if not listener2.running:
-#             print('end')
-#             test = False
 
-#     if state:
-#         print("running...")
-#         auto_nexus()
-#     else:
-#         print("off...")
+def find_hp_bar(hpr,hpg,hpb):
+    img = ImageGrab.grab()
+    img.save('screenshot.png')
+
+    w, h = img.size
+    midw = int(w/2)
+    midh = int(h/2)
+
+    rgb_im = img.convert('RGB')
+
+    arrayx = []
+    arrayy = []
+
+    for y in range(0, midh):
+        pixsub = []
+        for x in range(midw, w):
+            r,g,b = rgb_im.getpixel((x, y))
+            if r==hpr and g==hpg and b==hpb:
+            # if r==224 and g==52 and b==52:
+                arrayx.append(x)
+                arrayy.append(y)
+
+    pixarray = []
+    x1 = arrayx[0]
+    x2 = arrayx[-1]
+    diff = x2-x1
+    offsetx = int(diff/hp_percent)
+    x2 = x1 + offsetx
+
+
+    y1 = arrayy[0]
+    y2 = arrayy[-1]
+    diff = y2-y1
+    offsety = int(diff/2)
+    y3 = y1 + offsety
+
+    r,g,b = rgb_im.getpixel((x2, y3))
+
+    for y in range(y1, y2):
+        pixsub = []
+        for x in range(x1, x2):
+            pixsub.append(rgb_im.getpixel((x, y)))
+        pixarray.append(pixsub)
+
+    new_array = np.array(pixarray, dtype=np.uint8)
+    new_image = Image.fromarray(new_array)
+    new_image.save('new_pic.png')
+    return x2,y3,r,g,b
+
+x,y,r,g,b = find_hp_bar(222,52,49)
+im1 = ImageGrab.grab(bbox=(x,y,x+1,y+1))
+rgb_im = im1.convert('RGB')
+r,g,b = rgb_im.getpixel((0, 0))
+print(r,g,b,sep=',')
+
+i = 0
+test = True
+state = True
+while test:
+    with keyboard.Listener(on_press=on_press_end) as listener2:
+        time.sleep(.05)
+        if not listener2.running:
+            print('end')
+            test = False
+    if state:
+        # print("running...")
+        auto_nexus(x,y,r,g,b)
+    else:
+        print("off...")
 
 # --------------------------------------------------------------------------    
 
