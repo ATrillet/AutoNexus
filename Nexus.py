@@ -23,7 +23,7 @@ def auto_nexus(hpx, hpy):
     rgb_im = im1.convert('RGB')
     a,b,c = rgb_im.getpixel((0, 0))
     print(a,b,c)
-    if a==82 and b==85 and c==82:
+    if a==84 and b==84 and c==84:
         print("dying")
         board.press('r')
         time.sleep(4)
@@ -48,8 +48,7 @@ def find_hp_bar(hpr,hpg,hpb):
         pixsub = []
         for x in range(midw, w):
             r,g,b = rgb_im.getpixel((x, y))
-            if r==hpr and g==hpg and b==hpb:
-            # if r==224 and g==52 and b==52:
+            if r==224 and g==52 and b==52:
                 arrayx.append(x)
                 arrayy.append(y)
 
@@ -83,7 +82,6 @@ def find_hp_bar(hpr,hpg,hpb):
     return x3,y3
 
 x,y = find_hp_bar(224,52,52)
-# x,y = find_hp_bar(222,52,49)
 im1 = ImageGrab.grab(bbox=(x,y,x+1,y+1))
 rgb_im = im1.convert('RGB')
 r,g,b = rgb_im.getpixel((0, 0))
