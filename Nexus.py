@@ -7,7 +7,7 @@ from pynput import keyboard
 import time
 
 #realm tick rate 0.2s
-hp_percent = 2
+hp_percent = 3
 board = Controller()
 
 def on_press_end(key):
@@ -22,10 +22,10 @@ def auto_nexus(hpx, hpy):
     im1 = ImageGrab.grab(bbox=(x,y,x+1,y+1))  # x1, y1, x2, y2
     rgb_im = im1.convert('RGB')
     a,b,c = rgb_im.getpixel((0, 0))
-    print(a,b,c)
     if a==84 and b==84 and c==84:
-        print("dying")
+        board.press('f')
         board.press('r')
+        print("dying")
         time.sleep(4)
 
 
@@ -85,9 +85,10 @@ x,y = find_hp_bar(224,52,52)
 im1 = ImageGrab.grab(bbox=(x,y,x+1,y+1))
 rgb_im = im1.convert('RGB')
 r,g,b = rgb_im.getpixel((0, 0))
-print(r,g,b,sep=',')
+# print(r,g,b,sep=',')
 
 test = True
+print("starting")
 while test:
     with keyboard.Listener(on_press=on_press_end) as listener2:
         time.sleep(.01)
